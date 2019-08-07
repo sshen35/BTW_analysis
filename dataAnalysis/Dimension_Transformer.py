@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from pyquaternion import Quaternion
 import math
 
-class dimension_transformer:
+class Dimension_Transformer:
     def __init__(self, motion_file, location_file):
         self.motion_data = pd.read_csv(motion_file)
         self.motion_data['time'] = self.motion_data.ZTIMESTAMPEST.str[28:30]
@@ -94,9 +94,10 @@ class dimension_transformer:
         plt.show()
 
 if __name__ == "__main__":
-    transformer = dimension_transformer("ZDEVICEMOTION_SUNDAY06162019.csv", "ZLOCATIONS_SUNDAY06162019.csv")
+    transformer = Dimension_Transformer("ZDEVICEMOTION_SUNDAY06162019.csv", "ZLOCATIONS_SUNDAY06162019.csv")
     transformer.phone_frame_to_reference_frame()
     transformer.reference_frame_to_vehicle_frame()
+    transformer.motion_data.to_csv(r'C:\Users\Owner\Dropbox\Sijun_Research\BTW analysis\dataAnalysis\motion_data.csv', index = None, header=True)
 
     transformer.plot_figure("ZGRAVITYX", title="Gravity on Phone Frame x")
     transformer.plot_figure("ZGRAVITYY", title="Gravity on Phone Frame y")
