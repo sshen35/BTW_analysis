@@ -10,8 +10,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import Dimension_Transformer as DT
 from sklearn.decomposition import PCA
+import os
 
-class PCA_Trasnformer():
+class PCA_Transformer():
     def __init__(self):
         self.transformer = DT.Dimension_Transformer("ZDEVICEMOTION_SUNDAY06162019.csv", "ZLOCATIONS_SUNDAY06162019.csv")
         self.transformer.phone_frame_to_reference_frame()
@@ -20,15 +21,13 @@ class PCA_Trasnformer():
         self.transformer.motion_data['PCA_y'] = 0
         self.df = self.transformer.motion_data # to save the space of code
 
-    def transform(self, time_window = 10):
+    def transform(self, time_window = 20):
         cur_index = 0
         next_index = cur_index + time_window
         features = ['user_original_x', 'user_original_y']
         while next_index <= len(self.df.index):
             data_temp = self.df.iloc[cur_index : next_index, :]
             res = self.transform_helper(data_temp.loc[:, features])
-            # print(res)
-            # print(self.df.PCA_x[cur_index : next_index])
             self.df.loc[cur_index : (next_index - 1), 'PCA_x'] = res['PC_1']
             self.df.loc[cur_index : (next_index - 1), 'PCA_y'] = res['PC_2']
             cur_index = next_index
@@ -39,9 +38,9 @@ class PCA_Trasnformer():
         # data_temp = data_temp.to_numpy()
         pca = PCA(n_components=2)
         pca.fit(data_temp)
-        # access values and vectors
+        # access and vectors
         vectors = pca.components_.T
-        res = data_temp.dot(vectors)
+        res = data.dot(vectors)
         res.columns = ['PC_1', 'PC_2']
         return res
 
@@ -74,14 +73,15 @@ class PCA_Trasnformer():
             x_loc = periods_label[i][0] / 2.0 + periods_label[i][1] / 2.0 - 20
             plt.annotate(locs[i], (x_loc[0], 0.8))
 
-        plt.savefig(title)
+        plt.savefig(os.path.join('plots', title))
         plt.show()
 
 if __name__ == "__main__":
-    pca_transformer = PCA_Trasnformer()
+    pca_transformer = PCA_Transformer()
     pca_transformer.transform()
     pca_transformer.plot_figure('PCA_x', "PCA on X")
     pca_transformer.plot_figure('PCA_y', "PCA on Y")
+    pca_transformer.df.to_csv(r'C:\Users\Owner\Dropbox\Sijun_Research\BTW analysis\dataAnalysis\motion_data.csv', index = None, header=True)
 
 
 

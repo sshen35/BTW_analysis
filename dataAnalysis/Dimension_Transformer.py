@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pyquaternion import Quaternion
 import math
+import os
 
 class Dimension_Transformer:
     def __init__(self, motion_file, location_file):
@@ -90,7 +91,7 @@ class Dimension_Transformer:
             x_loc = periods_label[i][0] / 2.0 + periods_label[i][1] / 2.0 - 20
             plt.annotate(locs[i], (x_loc[0], 0.8))
 
-        plt.savefig(title)
+        plt.savefig(os.path.join('plots', title))
         plt.show()
 
 if __name__ == "__main__":
